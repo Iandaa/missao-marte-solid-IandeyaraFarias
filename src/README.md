@@ -181,6 +181,7 @@ Crie o arquivo service/JogoService.java com o conteúdo abaixo:
 package solidexercicio10.service;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import solidexercicio10.model.Asteroide;
 import solidexercicio10.model.Dificuldade;
@@ -197,10 +198,12 @@ import solidexercicio10.repository.RankingRepository;
 public class JogoService {
     private final RankingRepository rankingRepository;
     private final MapaRenderer mapaRenderer;
+    private final Random random;
 
     public JogoService(RankingRepository rankingRepository) {
         this.rankingRepository = rankingRepository;
         this.mapaRenderer = new MapaRenderer();
+        this.random = new Random();
     }
 
     public void executarLoop(Scanner scanner) {
@@ -271,8 +274,12 @@ public class JogoService {
 
         while (partidaAtiva) {
             mapaRenderer.desenhar(missao, score, pilotoNome, minX, maxX, minY, maxY);
-            System.out.printf("Nave em (%d,%d) | Pontos: %d | Vidas: %d | A bordo: %d/%d | Restantes: %d%n",
-                    nave.getX(), nave.getY(), score, nave.getVidas(), nave.getPassageiros().size(), nave.getCapacidade(), missao.getPassageiros().size());
+                int passageirosABordo = nave.getPassageiros().size();
+                int passageirosRestantes = missao.getPassageiros().size();
+                int totalPassageiros = passageirosABordo + passageirosRestantes;
+                System.out.printf("Nave em (%d,%d) | Pontos: %d | Vidas: %d | A bordo: %d/%d | Restantes no mapa: %d | Total: %d%n",
+                    nave.getX(), nave.getY(), score, nave.getVidas(), passageirosABordo,
+                    nave.getCapacidade(), passageirosRestantes, totalPassageiros);
 
             String entrada = lerLinha(scanner, "Comando (w/s/a/d/c/q): ", "").trim().toLowerCase();
             if (entrada.isEmpty()) {
@@ -363,9 +370,6 @@ public class JogoService {
     }
 
     private Missao criarNovaMissao(Dificuldade dificuldade, int minX, int maxX, int minY, int maxY) {
-        Nave nave = new Nave("A-1", 0, 0, 3);
-        Missao missao = new Missao(nave);
-
         int qtdPassageiros = 4;
         int qtdAsteroides = 2;
         int qtdInimigos = 2;
@@ -378,6 +382,9 @@ public class JogoService {
             qtdInimigos = 3;
         }
 
+        Nave nave = new Nave("A-1", 0, 0, qtdPassageiros);
+        Missao missao = new Missao(nave);
+
         posicionarPassageiros(missao, qtdPassageiros, minX, maxX, minY, maxY, nave);
 
         posicionarEntidades(missao, qtdAsteroides, minX, maxX, minY, maxY, nave, true);
@@ -388,17 +395,10 @@ public class JogoService {
 
     private void posicionarPassageiros(Missao missao, int qtdPassageiros, int minX, int maxX, int minY, int maxY, Nave nave) {
         int indice = 0;
-        for (int y = maxY; y >= minY; y--) {
-            for (int x = minX; x <= maxX; x++) {
-                if (missao.getPassageiros().size() >= qtdPassageiros) {
-                    return;
-                }
-                if (x == nave.getX() && y == nave.getY()) {
-                    continue;
-                }
-                if (posicaoOcupada(missao, x, y)) {
-                    continue;
-                }
+        while (missao.getPassageiros().size() < qtdPassageiros) {
+            int[] posicao = sortearPosicaoLivre(missao, minX, maxX, minY, maxY, nave);
+            int x = posicao[0];
+            int y = posicao[1];
                 if (indice % 3 == 0) {
                     missao.adicionarPassageiro(new Professor("Dr. Silva", x, y));
                 } else if (indice % 3 == 1) {
@@ -407,7 +407,6 @@ public class JogoService {
                     missao.adicionarPassageiro(new Professor("Dr. Lima", x, y));
                 }
                 indice++;
-            }
         }
 
         if (missao.getPassageiros().size() < qtdPassageiros) {
@@ -417,30 +416,28 @@ public class JogoService {
     }
 
     private void posicionarEntidades(Missao missao, int qtd, int minX, int maxX, int minY, int maxY, Nave nave, boolean asteroide) {
-        for (int y = maxY; y >= minY; y--) {
-            for (int x = minX; x <= maxX; x++) {
+        int total = asteroide ? missao.getAsteroides().size() : missao.getInimigos().size();
+        while (total < qtd) {
+            int[] posicao = sortearPosicaoLivre(missao, minX, maxX, minY, maxY, nave);
                 if (asteroide) {
-                    if (missao.getAsteroides().size() >= qtd) {
-                        return;
-                    }
+                    missao.adicionarAsteroide(new Asteroide(posicao[0], posicao[1]));
                 } else {
-                    if (missao.getInimigos().size() >= qtd) {
-                        return;
-                    }
+                    missao.adicionarInimigo(new Inimigo(posicao[0], posicao[1]));
                 }
-                if (x == nave.getX() && y == nave.getY()) {
-                    continue;
-                }
-                if (posicaoOcupada(missao, x, y)) {
-                    continue;
-                }
-                if (asteroide) {
-                    missao.adicionarAsteroide(new Asteroide(x, y));
-                } else {
-                    missao.adicionarInimigo(new Inimigo(x, y));
-                }
+                total++;
+        }
+    }
+
+    private int[] sortearPosicaoLivre(Missao missao, int minX, int maxX, int minY, int maxY, Nave nave) {
+        int tentativasMaximas = Math.max(20, (maxX - minX + 1) * (maxY - minY + 1) * 2);
+        for (int tentativa = 0; tentativa < tentativasMaximas; tentativa++) {
+            int x = random.nextInt(maxX - minX + 1) + minX;
+            int y = random.nextInt(maxY - minY + 1) + minY;
+            if (!posicaoOcupada(missao, x, y) && !(x == nave.getX() && y == nave.getY())) {
+                return new int[] { x, y };
             }
         }
+        throw new IllegalStateException("O mapa nao possui posicoes livres suficientes");
     }
 
     private boolean posicaoOcupada(Missao missao, int x, int y) {
@@ -550,6 +547,8 @@ public class MapaRenderer {
                 char symbol = '.';
                 if (missao.getNave().getX() == x && missao.getNave().getY() == y) {
                     symbol = '@';
+                } else if (x == 0 && y == 0) {
+                    symbol = 'L';
                 } else {
                     for (Passageiro passageiro : missao.getPassageiros()) {
                         if (passageiro.getX() == x && passageiro.getY() == y) {
@@ -585,7 +584,7 @@ public class MapaRenderer {
             System.out.println();
         }
 
-        System.out.println("Legenda: @=Nave, P=Professor, E=Engenheiro, T=Astronauta, #=Asteroide, X=Inimigo, .=Vazio");
+        System.out.println("Legenda: @=Nave, L=Plataforma, P=Professor, E=Engenheiro, T=Astronauta, #=Asteroide, X=Inimigo, .=Vazio");
         System.out.println("Comandos: w/s/a/d (mover), c (embarcar), q (sair)");
     }
 }
@@ -662,7 +661,10 @@ public class RankingService implements RankingRepository {
         String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         linhas.add(nome + "|" + pontuacao + "|" + dificuldade + "|" + passageirosColetados + "|" + dataHora + "|" + tempoJogo);
         try {
-            Files.createDirectories(arquivo.getParent());
+            Path parent = arquivo.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             Files.write(arquivo, linhas, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("Não foi possível salvar o ranking", e);

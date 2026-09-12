@@ -17,7 +17,9 @@ Consolidar o aprendizado dos pilares de Orientação a Objetos, demonstrando com
 ## 🔧 Modificações Realizadas
 
 ### 1. Menu Principal Interativo
+
 Implementação de um loop de escolha no método `main` permitindo ao usuário navegar de forma clara:
+
 ```text
 --- MENU PRINCIPAL ---
 1. Iniciar Nova Missão
@@ -28,20 +30,26 @@ Implementação de um loop de escolha no método `main` permitindo ao usuário n
 ```
 
 ### 2. Enum `Dificuldade` para Segurança de Tipos (Type-Safety)
+
 Substituição das strings brutas por um tipo enumerado formal `Dificuldade` (com valores `FACIL`, `MEDIO`, `DIFICIL`) para lidar com as configurações do mapa e de pontuação de forma segura.
 
 ### 3. Computação de Estatísticas de Partida
+
 Cálculo da duração da missão comparando timestamps de início e fim da partida por meio de `System.currentTimeMillis()`. O resumo final exibe:
+
 - Pontuação final obtida.
 - Quantidade total de movimentos no grid marciano.
 - Duração da missão em segundos.
 - Feedback caso a pontuação seja o novo recorde absoluto.
 
 ### 4. Resetar Ranking
+
 Criação de funcionalidade para deletar o arquivo persistido `ranking.json` do disco, limpando os registros locais instantaneamente.
 
 ### 5. Separação de Concerns
+
 A classe `Main` foi limpa e modularizada em métodos menores:
+
 - `jogarPartida`: cuida do loop ativo de movimentos e ações dentro do mapa.
 - `exibirEstatisticas`: formata as métricas de tempo e pontuação.
 - `resetarRanking`: manipula a exclusão do arquivo JSON.
@@ -66,10 +74,10 @@ src/exercicio10/
 
 ## 📚 Conceitos de OO Demonstrados
 
-✅ **Encapsulamento e Abstração** de estado de jogo e dados do piloto.  
-✅ **Polimorfismo** no cálculo de pontuação dos diferentes passageiros (`getPontuacao`).  
-✅ **Composição e Delegação** de responsabilidades entre as classes `Missao`, `Nave` e perigos.  
-✅ **Enumerações (Enums)** para tipagem forte de dados.  
+✅ **Encapsulamento e Abstração** de estado de jogo e dados do piloto.
+✅ **Polimorfismo** no cálculo de pontuação dos diferentes passageiros (`getPontuacao`).
+✅ **Composição e Delegação** de responsabilidades entre as classes `Missao`, `Nave` e perigos.
+✅ **Enumerações (Enums)** para tipagem forte de dados.
 ✅ **Modularidade** através da quebra do código procedural em funções estáticas coesas.
 
 ## 🚀 Como Compilar e Executar
