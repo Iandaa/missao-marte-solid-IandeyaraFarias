@@ -14,7 +14,7 @@ Antes de começar:
 
 1. Compile e execute o exercício original.
 2. Anote as responsabilidades concentradas em `Main` e os comportamentos que
-    precisam continuar funcionando.
+   precisam continuar funcionando.
 3. Leia as apostilas correspondentes ao princípio que será aplicado.
 
 Durante a implementação:
@@ -22,7 +22,7 @@ Durante a implementação:
 1. Faça uma etapa por vez.
 2. Compile e execute depois de cada etapa.
 3. Responda às perguntas de reflexão com base no código, não apenas com a
-    definição do princípio.
+   definição do princípio.
 4. Registre qualquer decisão diferente da apresentada e explique o motivo.
 
 Ao final, crie `REVISAO-SOLID.md` na raiz do projeto e use o roteiro de revisão
@@ -40,17 +40,17 @@ Este material foi reorganizado para mostrar uma versão incremental e, ao mesmo 
 - A primeira parte apresenta a estrutura passo a passo.
 - A segunda parte mostra uma implementação de referência de cada arquivo.
 - O aluno deve implementar e testar a própria versão, comparando com a
-    referência somente depois de tentar a etapa.
+  referência somente depois de tentar a etapa.
 
 ## Critérios de conclusão
 
 - O jogo original continua disponível para comparação.
 - A versão refatorada compila sem erros e executa o fluxo principal.
 - O menu, a movimentação, o embarque, a vitória, o ranking e o reset foram
-    verificados manualmente.
+  verificados manualmente.
 - Cada etapa tem uma justificativa relacionada a um ou mais princípios SOLID.
 - A revisão final registra pelo menos uma melhoria adicional e uma decisão do
-    tutorial que poderia ser alterada, com argumentos.
+  tutorial que poderia ser alterada, com argumentos.
 
 ## Princípios do SOLID envolvidos
 
@@ -1139,12 +1139,12 @@ Execute os comandos abaixo na raiz do projeto. O primeiro comando compila a
 versão inicial; o segundo compila a versão refatorada depois que o aluno criar
 os arquivos do tutorial:
 
-```bash
-mkdir out -Force | Out-Null
+```powershell
+New-Item -ItemType Directory -Force -Path out | Out-Null
 javac -d out src/exercicio10/*.java
 java -cp out exercicio10.Main
 
-javac -d out src/solidexercicio10/**/*.java src/solidexercicio10/*.java
+javac -d out (Get-ChildItem -Recurse -Filter *.java src/solidexercicio10 | ForEach-Object FullName)
 java -cp out solidexercicio10.Main
 ```
 
@@ -1164,15 +1164,15 @@ fazendo uma revisão de código. Crie `REVISAO-SOLID.md` e responda:
 
 - **SRP:** cada classe ainda tem mais de um motivo relevante para mudar?
 - **OCP:** adicionar um novo passageiro, uma nova dificuldade ou outra forma
-    de persistência exige editar código já estável?
+  de persistência exige editar código já estável?
 - **LSP:** cada subclasse de `Passageiro` pode ser usada onde `Passageiro` é
-    esperado sem surpreender o cliente?
+  esperado sem surpreender o cliente?
 - **ISP:** alguma interface obriga um cliente a depender de métodos que não
-    utiliza?
+  utiliza?
 - **DIP:** alguma regra de negócio depende diretamente de arquivo, console,
-    `Scanner` ou uma classe concreta de infraestrutura?
+  `Scanner` ou uma classe concreta de infraestrutura?
 - Existem responsabilidades ou abstrações que foram criadas apenas para
-    seguir o tutorial, sem benefício claro?
+  seguir o tutorial, sem benefício claro?
 - Há validações, testes ou tratamento de erros que ainda faltam?
 
 ### Formato da revisão
