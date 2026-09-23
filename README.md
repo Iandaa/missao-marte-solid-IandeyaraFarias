@@ -31,3 +31,36 @@ custo que introduz.
 - [Tutorial passo a passo](src/README.md)
 - [Apostilas sobre SOLID](apostilas-solid/SOLID-README.md)
 - [Código inicial do exercício](src/exercicio10/README.md)
+
+## Modelagem UML
+
+### Diagrama de classes do domínio
+
+[Visualizar diagrama de classes do domínio](docs/uml/diagrama-classes-model.png)
+
+[Visualizar diagrama no draw.io](https://drive.google.com/file/d/1v34FQRjx9UyiHlihxl4nbmpREnkkuHlN/view?usp=sharing)
+
+O diagrama representa as principais entidades do pacote `solidexercicio10.model`, incluindo classes abstratas, classes concretas, enumeração e interfaces. Também apresenta as relações de herança, implementação de interfaces, associações e multiplicidades entre as entidades, conforme a estrutura implementada no projeto.
+
+### Diagrama de Pacotes
+
+[Visualizar diagrama de pacotes (imagem)](docs/uml/diagrama-pacotes.png)
+
+[Visualizar diagrama no draw.io](https://drive.google.com/file/d/1kQMIQr5LAlwEmta69JxR921DqDECYpVO/view?usp=sharing)
+
+O projeto está organizado no pacote principal `solidexercicio10`, que contém a classe `Main` e os subpacotes `model`, `service`, `presentation` e `repository`.
+
+O pacote `model` reúne as principais entidades e interfaces do domínio. O pacote `presentation` contém o `MapaRenderer`, responsável pela apresentação do mapa. O pacote `repository` define o contrato `RankingRepository` e as classes relacionadas ao armazenamento do ranking. Já o pacote `service` contém o `JogoService`, responsável pela lógica principal da aplicação.
+
+### Dependências principais
+
+- `solidexercicio10` → `service` e `repository`, por meio da configuração realizada pelo `Main`.
+- `service` → `model`, `presentation` e `repository`.
+- `presentation` → `model`.
+- `repository` → `model`.
+
+### Ponto principal da arquitetura
+
+O `service` depende do contrato **`RankingRepository`**, definido como uma interface no pacote `repository`, e não diretamente dos detalhes de persistência.
+
+A classe `Main` fornece a implementação do `RankingRepository` ao serviço. Dessa forma, o `service` trabalha com uma abstração, enquanto os detalhes de como os dados são armazenados ficam separados da lógica principal da aplicação.
