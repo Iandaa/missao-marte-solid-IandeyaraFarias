@@ -147,6 +147,7 @@ O pacote `model` reúne as principais entidades e interfaces do domínio. O paco
 - **`REVISAO-SOLID.md`** — revisão crítica obrigatória: observações por princípio, melhorias adicionais, decisões do tutorial com as quais concordamos e discordamos, testes realizados e prioridades.
 - **`tutorialSolid.md`** — passo a passo do tutorial que orientou a refatoração.
 - **`apostilas-solid/SOLID-README.md`** — índice das apostilas por princípio.
+  
 ### Dependências principais
 
 - `solidexercicio10` → `service` e `repository`, por meio da configuração realizada pelo `Main`.
